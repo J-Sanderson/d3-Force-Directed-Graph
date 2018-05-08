@@ -1,3 +1,13 @@
-#chart {
-  border: 1px solid #000000;
+html, body, #chart {
+  margin: 0px;
+}
+
+#flags {
+  position: absolute;
+  background-image: url("https://raw.githubusercontent.com/J-Sanderson/d3-Force-Directed-Graph/master/flags.png")
+}
+
+.links {
+  stroke: black;
+  stroke-width: 1;
 }
