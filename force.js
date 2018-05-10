@@ -2,7 +2,7 @@ d3.json(
   "https://raw.githubusercontent.com/DealPete/forceDirected/master/countries.json",
   function(data) {
     var w = document.body.offsetWidth;
-    var h = 900;
+    var h = document.body.offsetHeight;
     var flagWidth = 24;
     var flagHeight = 24;
 
@@ -10,15 +10,17 @@ d3.json(
       .select("#chart")
       .attr("width", w)
       .attr("height", h);
-    
+
     //disallows boxes from leaving the chart area
     function box_force() {
       for (var i = 0, n = data.nodes.length; i < n; ++i) {
         data.nodes[i].x = Math.max(
-          flagWidth, Math.min(w - flagWidth, data.nodes[i].x)
+          flagWidth,
+          Math.min(w - flagWidth, data.nodes[i].x)
         );
         data.nodes[i].y = Math.max(
-          flagWidth, Math.min(w - flagWidth, data.nodes[i].y)
+          flagWidth,
+          Math.min(w - flagWidth, data.nodes[i].y)
         );
       }
     }
@@ -26,7 +28,13 @@ d3.json(
     var simulation = d3
       .forceSimulation()
       .force("link", d3.forceLink())
-      .force("charge", d3.forceManyBody().distanceMax(175))
+      .force(
+        "charge",
+        d3
+          .forceManyBody()
+          .distanceMax(200)
+          .distanceMin(50)
+      )
       .force("center", d3.forceCenter(w / 2, h / 2))
       .force("box_force", box_force);
 
@@ -36,30 +44,9 @@ d3.json(
       .enter()
       .append("line")
       .attr("class", "links");
-/*
-    var node = svg
-      .selectAll("g")
-      .data(data.nodes)
-      .enter()
-      .append("rect")
-      .attr("class", "nodes")
-      .attr("height", flagHeight)
-      .attr("width", flagWidth)
-      .attr("stroke", "black") //temp
-      .attr("fill", "transparent") //temp
-      .call(
-        d3
-          .drag()
-          .on("start", dragstarted)
-          .on("drag", dragged)
-          .on("end", dragended)
-      );
-    node.append("title").text(function(d) {
-      return d.country;
-    });
-    */
-    
-    var node = d3.select("#flag-box")
+
+    var node = d3
+      .select("#flag-box")
       .selectAll("div")
       .data(data.nodes)
       .enter()
@@ -76,15 +63,16 @@ d3.json(
           .on("drag", dragged)
           .on("end", dragended)
       )
-      .attr("title", function(d){
+      .attr("title", function(d) {
         return d.country;
-      })
-    
-    
-    svg.append("text")
+      });
+
+    svg
+      .append("text")
       .text("Force Directed Graph of State Contiguity")
-      .attr("x", 10)
-      .attr("y", 30)
+      .attr("x", 30)
+      .attr("y", 50)
+      .attr("class", "chart-title");
 
     function ticked() {
       link
@@ -100,28 +88,24 @@ d3.json(
         .attr("y2", function(d) {
           return d.target.y + flagHeight / 2;
         });
-      //node
-        //.attr("x", function(d) {
-          //return d.x;
-        //})
-        //.attr("y", function(d) {
-          //return d.y;
-        //});
-      node.style('margin-left', function (d) {
-        return (d.x) + 'px';
-      })
-      .style('margin-top', function (d) {
-        return (d.y) + 'px';
-      })
+      node
+        .style("margin-left", function(d) {
+          return d.x + "px";
+        })
+        .style("margin-top", function(d) {
+          return d.y + "px";
+        });
     }
-    
+
     simulation.nodes(data.nodes).on("tick", ticked);
     simulation.force("link").links(data.links);
 
     function dragstarted(d) {
-      if (!d3.event.active) {simulation.alphaTarget(0.3).restart();
-      d.fx = d.x;
-      d.fy = d.y;}
+      if (!d3.event.active) {
+        simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      }
     }
 
     function dragged(d) {
@@ -130,9 +114,11 @@ d3.json(
     }
 
     function dragended(d) {
-      if (!d3.event.active) {simulation.alphaTarget(0);
-      d.fx = null;
-      d.fy = null;}
+      if (!d3.event.active) {
+        simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+      }
     }
   }
 );

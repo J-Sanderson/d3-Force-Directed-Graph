@@ -1,10 +1,26 @@
-html, body, #chart {
+:root {
+  --background: #2D2939;
+  --text: #B9B6C5;
+}
+
+html, body, #flag-box, #chart {
   margin: 0px;
+  height: 100%
+}
+
+body {
+  background-color: var(--background);
 }
 
 .links {
-  stroke: black;
-  stroke-width: 1;
+  stroke: var(--text);
+  stroke-width: 1.5;
+}
+
+.chart-title {
+  fill: var(--text);
+  font-family: 'Patua One', cursive;
+  font-size: 23px;
 }
 
 #flag-box {
